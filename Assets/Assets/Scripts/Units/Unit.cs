@@ -9,7 +9,7 @@ public enum UnitState
     Moving
 }
 
-public class Unit : MonoBehaviour, ISelectable , IDamagable, IAttacker, IMover
+public class Unit : MonoBehaviour, ISelectable, IDamagable, IAttacker, IMover
 {
     // General
     private Rigidbody2D rb;
@@ -38,7 +38,6 @@ public class Unit : MonoBehaviour, ISelectable , IDamagable, IAttacker, IMover
         healthSystem = new HealthSystem(health);
         healthBar.Setup(healthSystem);
         basicAttack = Instantiate(basicAttack);
-        //basicAttack.Init();
     }
 
     // Update is called once per frame
@@ -90,7 +89,7 @@ public class Unit : MonoBehaviour, ISelectable , IDamagable, IAttacker, IMover
     public void RestoreHealth(float healAmount) => healthSystem.Heal(healAmount);
 
     // Returns position of this object.
-    public Vector2 GetPosition() => transform.position;
+    public Collider2D GetCollider() => GetComponent<Collider2D>();
 
     // Returns current flat amount of health.
     public float GetHealth() => healthSystem.GetHealth();
@@ -104,7 +103,7 @@ public class Unit : MonoBehaviour, ISelectable , IDamagable, IAttacker, IMover
     // IAttacker -----------------------------------------------------------------------------------
     // Attacks the last attacked target.
     public void Attack() => Attack(GetTarget());
-    
+
     // Attacks target and sets as current target.
     public void Attack(IDamagable target)
     {
@@ -129,10 +128,10 @@ public class Unit : MonoBehaviour, ISelectable , IDamagable, IAttacker, IMover
             }
         }
         else
-            MoveTo(target.GetPosition());
+            MoveTo(target.GetCollider().ClosestPoint(transform.position));
     }
 
-    public bool InRange() => Vector2.Distance(transform.position, attackTarget.GetPosition()) < basicAttack.GetRange();
+    public bool InRange() => Vector2.Distance(transform.position , attackTarget.GetCollider().ClosestPoint(transform.position)) < basicAttack.GetRange();
     
     // Sets target as current target.
     public void SetTarget(IDamagable target)

@@ -5,7 +5,7 @@ public interface IDamagable
     void DealDamage(DamageTypes damage);
     void RestoreHealth(float healAmount);
 
-    Vector2 GetPosition();
+    Collider2D GetCollider();
 
     float GetHealth();
     float GetHealthPercentage();

@@ -1,5 +1,7 @@
-﻿
+﻿using UnityEngine;
+
 // Holds damage types for attacks and defences. With basic operations.
+[System.Serializable]
 public struct DamageTypes
 {
     public float physical;
