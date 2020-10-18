@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
-public interface IProducer 
+public interface IProducer
 {
-    void GetProducts();
+    Producer GetProducer();
     void Produce();
-
-
+    void StartProducing(int index);
+    void CreateProduct(object sender, EventArgs e);
 }

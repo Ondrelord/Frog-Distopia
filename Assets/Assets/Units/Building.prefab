@@ -671,10 +671,10 @@ MonoBehaviour:
   selectionHighlight: {fileID: 6696185658946490255}
   healthBar: {fileID: 1883470110174763266}
   defence: {fileID: 11400000, guid: 50ab2da41b4432f4db2dd83c0955a9dd, type: 2}
-  products:
-  - {fileID: 11400000, guid: ffbc679663dd24b49ae79f698c286492, type: 2}
-  productMaxQueueLenght: 5
-  producingProgressBar: {fileID: 7145540235405441971}
+  producer:
+    products: []
+    productMaxQueueLenght: 5
+    producingProgressBar: {fileID: 7145540235405441971}
   spawnTransform: {fileID: 16861309190981620}
 --- !u!1 &7378968496185683747
 GameObject:

@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Building : MonoBehaviour, ISelectable, IDamagable
+public class Building : MonoBehaviour, ISelectable, IDamagable, IProducer
 {
     UnitState state = UnitState.Stop;
 
@@ -17,11 +18,18 @@ public class Building : MonoBehaviour, ISelectable, IDamagable
     // Defence
     [SerializeField] Defence defence = null;
 
+    // Produce
+    [SerializeField] Producer producer = null;
+    [SerializeField] Transform spawnTransform = null;
+
+
     // Start is called before the first frame update
     void Start()
     {
         healthSystem = new HealthSystem(health);
         healthBar.Setup(healthSystem);
+
+        GetProducer().CreateProduct += CreateProduct;
     }
 
     // Update is called once per frame
@@ -35,7 +43,7 @@ public class Building : MonoBehaviour, ISelectable, IDamagable
                 }
             case UnitState.Producing:
                 {
-                    Producing();
+                    Produce();
                     break;
                 }
         }
@@ -69,71 +77,22 @@ public class Building : MonoBehaviour, ISelectable, IDamagable
 
     public bool IsDead() => GetHealth() == 0f;
 
+    // IProducer ------------------------------------------------------------------------------
 
-    // Producer Placeholder ------------------------------------------------------------------------------
-    
-    // products that can be created
-    public Product[] products;
+    public Producer GetProducer() => producer;
 
-    // currently producing
-    Product producing = null;
-    // products to be produced
-    Queue<Product> productQueue = new Queue<Product>();
-    [SerializeField] int productMaxQueueLenght = 5;
-
-    // progress of current production
-    float producingProgress;
-    [SerializeField] UnityEngine.UI.Image producingProgressBar = null;
-    // position where new objects are spawned
-    [SerializeField] Transform spawnTransform = null;
-
-    // Command to Start producing (or enqueue if already producing).
-    public void Produce(Product product)
+    public void Produce()
     {
-        if (producing == null)
-        {
-            producing = product;
-            SetState(UnitState.Producing);
-        }
-        else if (productQueue.Count < productMaxQueueLenght)
-            productQueue.Enqueue(product);
-
-    }
-
-    // Update loop function. Continues producing until no products are in queue.
-    public void Producing()
-    {
-        // contiue in production
-        if (producing != null)
-        {
-            if (producingProgress < producing.GetTimeToProduce())
-            {
-                producingProgress += Time.deltaTime;
-                producingProgressBar.fillAmount = producingProgress / producing.GetTimeToProduce();
-            }
-            else
-            {
-                // create product
-                Instantiate(producing.GetResult(), spawnTransform.position, Quaternion.identity);
-                // reset progress
-                producingProgress = 0f;
-                producingProgressBar.fillAmount = 0;
-                // next in queue
-                if (productQueue.Count != 0)
-                    producing = productQueue.Dequeue();
-                else
-                {
-                    producing = null;
-                    SetState(UnitState.Stop);
-                }
-            }
-        }
-        else
+        GetProducer().Producing();
+        if (!GetProducer().Working())
             SetState(UnitState.Stop);
     }
 
+    public void StartProducing(int index)
+    {
+        GetProducer().Produce(index);
+        SetState(UnitState.Producing);
+    }
 
-
-
-
+    public void CreateProduct(object sender, EventArgs e) => Instantiate(GetProducer().GetDoneProduct().GetResult(), spawnTransform.position, Quaternion.identity);
 }
