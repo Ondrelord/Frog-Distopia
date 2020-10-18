@@ -6,7 +6,8 @@ public enum UnitState
 {
     Stop,
     Attacking,
-    Moving
+    Moving,
+    Producing
 }
 
 public class Unit : MonoBehaviour, ISelectable, IDamagable, IAttacker, IMover
@@ -67,7 +68,8 @@ public class Unit : MonoBehaviour, ISelectable, IDamagable, IAttacker, IMover
         }
     }
 
-    public void SetState(UnitState state) => this.state = state;
+    // Sets state of this unit to "state". If the state is not possible for this unit, unit will keep original state.
+    public void SetState(UnitState state) => this.state = state != UnitState.Producing ? state : this.state;
 
     public UnitState GetState() => state;
 

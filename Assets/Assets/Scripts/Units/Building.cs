@@ -27,7 +27,18 @@ public class Building : MonoBehaviour, ISelectable, IDamagable
     // Update is called once per frame
     void Update()
     {
-
+        switch (state)
+        {
+            case UnitState.Stop:
+                {
+                    break;
+                }
+            case UnitState.Producing:
+                {
+                    Producing();
+                    break;
+                }
+        }
     }
 
     // ISelectable -----------------------------------------------------------------------------------
@@ -37,7 +48,11 @@ public class Building : MonoBehaviour, ISelectable, IDamagable
 
     public void HideHighlight() => selectionHighlight.SetActive(false);
 
-    public void SetState(UnitState state) => this.state = state;
+    public void SetState(UnitState state)
+    {
+        if (state != UnitState.Moving && state != UnitState.Attacking)
+            this.state = state;
+    }
 
     public void ShowHighlight() => selectionHighlight.SetActive(true);
 
@@ -53,4 +68,72 @@ public class Building : MonoBehaviour, ISelectable, IDamagable
     public float GetHealthPercentage() => healthSystem.GetHealthPercentage();
 
     public bool IsDead() => GetHealth() == 0f;
+
+
+    // Producer Placeholder ------------------------------------------------------------------------------
+    
+    // products that can be created
+    public Product[] products;
+
+    // currently producing
+    Product producing = null;
+    // products to be produced
+    Queue<Product> productQueue = new Queue<Product>();
+    [SerializeField] int productMaxQueueLenght = 5;
+
+    // progress of current production
+    float producingProgress;
+    [SerializeField] UnityEngine.UI.Image producingProgressBar = null;
+    // position where new objects are spawned
+    [SerializeField] Transform spawnTransform = null;
+
+    // Command to Start producing (or enqueue if already producing).
+    public void Produce(Product product)
+    {
+        if (producing == null)
+        {
+            producing = product;
+            SetState(UnitState.Producing);
+        }
+        else if (productQueue.Count < productMaxQueueLenght)
+            productQueue.Enqueue(product);
+
+    }
+
+    // Update loop function. Continues producing until no products are in queue.
+    public void Producing()
+    {
+        // contiue in production
+        if (producing != null)
+        {
+            if (producingProgress < producing.GetTimeToProduce())
+            {
+                producingProgress += Time.deltaTime;
+                producingProgressBar.fillAmount = producingProgress / producing.GetTimeToProduce();
+            }
+            else
+            {
+                // create product
+                Instantiate(producing.GetResult(), spawnTransform.position, Quaternion.identity);
+                // reset progress
+                producingProgress = 0f;
+                producingProgressBar.fillAmount = 0;
+                // next in queue
+                if (productQueue.Count != 0)
+                    producing = productQueue.Dequeue();
+                else
+                {
+                    producing = null;
+                    SetState(UnitState.Stop);
+                }
+            }
+        }
+        else
+            SetState(UnitState.Stop);
+    }
+
+
+
+
+
 }

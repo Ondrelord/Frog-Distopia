@@ -4,8 +4,8 @@
 [System.Serializable]
 public struct DamageTypes
 {
-    public float physical;
-    public float magical;
+    public float physical { private set; get; }
+    public float magical { private set; get; }
 
     public DamageTypes(float physical, float magical = 0f)
     {
