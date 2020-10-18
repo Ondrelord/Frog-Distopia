@@ -25358,6 +25358,10 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 240229980503089490, guid: f3cc1d8aba237f54c847b00ecb1f2641, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 240229980503089492, guid: f3cc1d8aba237f54c847b00ecb1f2641, type: 3}
       propertyPath: m_Name
       value: Unit (1)
