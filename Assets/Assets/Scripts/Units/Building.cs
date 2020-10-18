@@ -29,6 +29,7 @@ public class Building : MonoBehaviour, ISelectable, IDamagable, IProducer
         healthSystem = new HealthSystem(health);
         healthBar.Setup(healthSystem);
 
+        producer.Setup();
         GetProducer().CreateProduct += CreateProduct;
     }
 

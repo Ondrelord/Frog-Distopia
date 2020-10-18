@@ -22,6 +22,17 @@ public class Producer
     bool productReady = false;
     Product productDone;
 
+    public void Setup()
+    {
+        GameObject.FindObjectOfType<TimeManager>().Tick += Producer_Tick;
+    }
+
+    private void Producer_Tick(object sender, EventArgs e)
+    {
+        if (Working() && producingProgress <= producing.GetTimeToProduce())
+            producingProgress += Time.deltaTime;
+    }
+
     // Command to Start producing (or enqueue if already producing).
     public void Produce(int index)
     {
@@ -45,7 +56,6 @@ public class Producer
         {
             if (producingProgress < producing.GetTimeToProduce())
             {
-                producingProgress += Time.deltaTime;
                 producingProgressBar.fillAmount = producingProgress / producing.GetTimeToProduce();
             }
             else
@@ -56,7 +66,7 @@ public class Producer
                 CreateProduct?.Invoke(this, EventArgs.Empty);
                 // reset progress
                 producingProgress = 0f;
-                producingProgressBar.fillAmount = 0;
+                producingProgressBar.fillAmount = 0f;
                 // next in queue
                 if (productQueue.Count != 0)
                     producing = productQueue.Dequeue();
