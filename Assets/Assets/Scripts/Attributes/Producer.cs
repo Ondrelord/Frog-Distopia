@@ -16,15 +16,16 @@ public class Producer
 
     // progress of current production
     float producingProgress;
-    [SerializeField] UnityEngine.UI.Image producingProgressBar = null;
+    public event EventHandler OnProgressChanged;
 
     public event EventHandler CreateProduct;
     bool productReady = false;
     Product productDone;
 
-    public void Setup()
+    public void Setup(GUIBar progressBar)
     {
         GameObject.FindObjectOfType<TimeManager>().Tick += Producer_Tick;
+        OnProgressChanged += progressBar.Get_OnValueChanged();
     }
 
     private void Producer_Tick(object sender, EventArgs e)
@@ -56,7 +57,7 @@ public class Producer
         {
             if (producingProgress < producing.GetTimeToProduce())
             {
-                producingProgressBar.fillAmount = producingProgress / producing.GetTimeToProduce();
+                OnProgressChanged?.Invoke(this, new GUIBarEvent(producingProgress / producing.GetTimeToProduce()));
             }
             else
             {
@@ -66,7 +67,7 @@ public class Producer
                 CreateProduct?.Invoke(this, EventArgs.Empty);
                 // reset progress
                 producingProgress = 0f;
-                producingProgressBar.fillAmount = 0f;
+                OnProgressChanged?.Invoke(this, new GUIBarEvent(0f));
                 // next in queue
                 if (productQueue.Count != 0)
                     producing = productQueue.Dequeue();

@@ -12,7 +12,7 @@ public class Building : MonoBehaviour, ISelectable, IDamagable, IProducer
 
     // Health
     HealthSystem healthSystem;
-    [SerializeField] HealthBar healthBar = null;
+    [SerializeField] GUIBar healthBar = null;
     float health = 100f;
 
     // Defence
@@ -20,16 +20,16 @@ public class Building : MonoBehaviour, ISelectable, IDamagable, IProducer
 
     // Produce
     [SerializeField] Producer producer = null;
+    [SerializeField] GUIBar produceProgressBar = null;
     [SerializeField] Transform spawnTransform = null;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        healthSystem = new HealthSystem(health);
-        healthBar.Setup(healthSystem);
+        healthSystem = new HealthSystem(health, healthBar);
 
-        producer.Setup();
+        producer.Setup(produceProgressBar);
         GetProducer().CreateProduct += CreateProduct;
     }
 

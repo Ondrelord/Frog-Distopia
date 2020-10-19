@@ -22,7 +22,7 @@ public class Unit : MonoBehaviour, ISelectable, IDamagable, IAttacker, IMover
 
     // Health
     private HealthSystem healthSystem;
-    [SerializeField] private HealthBar healthBar = null;
+    [SerializeField] private GUIBar healthBar = null;
     [SerializeField] private float health = 100f;
 
     // Attack
@@ -36,8 +36,7 @@ public class Unit : MonoBehaviour, ISelectable, IDamagable, IAttacker, IMover
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        healthSystem = new HealthSystem(health);
-        healthBar.Setup(healthSystem);
+        healthSystem = new HealthSystem(health, healthBar);
         basicAttack = Instantiate(basicAttack);
     }
 
